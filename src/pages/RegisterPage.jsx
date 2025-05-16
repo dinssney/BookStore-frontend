@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
 import '../styles/global.css';
 
 const RegisterPage = () => {
@@ -17,25 +18,8 @@ const RegisterPage = () => {
     setError('');
 
     try {
-      const endpoint = role === 'publisher' 
-        ? '/publisher/register' 
-        : '/register';
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-
-      localStorage.setItem('token', data.token);
+      const data = await authService.register(username, email, password, role);
+      authService.storeToken(data.token);
       navigate('/');
     } catch (err) {
       setError(err.message);
