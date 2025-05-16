@@ -26,10 +26,14 @@ const BooksList = () => {
     fetchBooks();
   }, []);
 
+  const handleBookClick = (id) => {
+    navigate(`/books/${id}`);
+  };
+
   return (
     <>
       <Header />
-      <main className="container" style={{ flex: '1' }}>
+      <main className="container">
         <div className="books-list mt-5">
           <h1 className="text-center mb-4">Book Collection</h1>
 
@@ -39,7 +43,11 @@ const BooksList = () => {
           <div className="row">
             {books.map((book) => (
               <div className="col-12 col-sm-6 col-md-3 mb-4" key={book.ID}>
-                <div className="card h-100">
+                <div 
+                  className="card h-100" 
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleBookClick(book.ID)}
+                >
                   {book.cover_image_url && (
                     <img
                       src={book.cover_image_url}
