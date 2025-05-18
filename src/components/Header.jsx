@@ -44,6 +44,11 @@ const Header = () => {
                   </li>
                 </>
               )}
+              {token && (
+                <li className="nav-item">
+                  <Link to="/my-books" className="nav-link">My Books</Link>
+                </li>
+              )}
               {userType === 'publisher' && (
                 <li className="nav-item">
                   <Link to="/publish-book" className="nav-link">Publish Book</Link>

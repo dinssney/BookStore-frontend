@@ -6,6 +6,9 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import BooksList from './pages/BooksList';
 import OneBookPage from './pages/OneBookPage';
+import PublishBookPage from './pages/PublishBookPage';
+import UpdateBookPage from './pages/UpdateBookPage';
+import MyBooksPage from './pages/MyBooksPage'; // Import the new MyBooksPage component
 import './styles/global.css';
 
 function App() {
@@ -17,6 +20,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/books/:id" element={<OneBookPage />} />
+          <Route path="/publish-book" element={<PublishBookPage />} />
+          <Route path="/edit-book/:id" element={<UpdateBookPage />} />
+          <Route path="/my-books" element={<MyBooksPage />} />
         </Routes>
       </Router>
       <ToastContainer

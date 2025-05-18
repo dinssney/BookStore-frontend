@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import bookService from '../services/bookService';
+import userBooksService from '../services/userBooksService';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/global.css';
@@ -37,6 +39,17 @@ const OneBookPage = () => {
       } catch (err) {
         setError('Failed to delete the book');
       }
+    }
+  };
+
+  const handleAddToLibrary = async () => {
+    try {
+      await userBooksService.addBookToUser(id);
+      toast.success('Book added to your library successfully!');
+      navigate('/my-books');
+    } catch (err) {
+      setError('Failed to add book to your library');
+      toast.error('Failed to add book to your library');
     }
   };
 
@@ -78,16 +91,26 @@ const OneBookPage = () => {
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center">
                     <h1 className="card-title">{book.title}</h1>
-                    {isPublisher && (
-                      <div className="d-flex gap-2">
-                        <Link to={`/edit-book/${id}`} className="btn btn-primary">
-                          Edit Book
-                        </Link>
-                        <button onClick={handleDelete} className="btn btn-danger">
-                          Delete Book
+                    <div className="d-flex gap-2">
+                      {isPublisher && (
+                        <>
+                          <Link to={`/edit-book/${id}`} className="btn btn-primary">
+                            Edit Book
+                          </Link>
+                          <button onClick={handleDelete} className="btn btn-danger">
+                            Delete Book
+                          </button>
+                        </>
+                      )}
+                      {token && !isPublisher && (
+                        <button 
+                          onClick={handleAddToLibrary} 
+                          className="btn btn-success"
+                        >
+                          Add to My Library
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                   <h3 className="card-subtitle mb-3 text-muted">by {book.author}</h3>
                   <p className="card-text">{book.description}</p>
