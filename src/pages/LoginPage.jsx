@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import authService from '../services/authService';
 import '../styles/global.css';
 
@@ -9,6 +11,16 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.showToast && location.state.message) {
+      toast.success(location.state.message);
+      location.state.showToast = false;
+      location.state.message = ''
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

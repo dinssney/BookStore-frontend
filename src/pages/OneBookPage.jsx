@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import bookService from '../services/bookService';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,6 +10,9 @@ const OneBookPage = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const token = localStorage.getItem('token');
+  const currentUserId = token ? JSON.parse(atob(token.split('.')[1])).user_id : null;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -26,8 +29,21 @@ const OneBookPage = () => {
     fetchBook();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this book?')) {
+      try {
+        await bookService.deleteBook(id);
+        navigate('/', { state: { showToast: true, message: 'Book deleted successfully!' } });
+      } catch (err) {
+        setError('Failed to delete the book');
+      }
+    }
+  };
+
   if (loading) return <div className="text-center">Loading book details...</div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
+
+  const isPublisher = currentUserId && book?.publisher?.ID === currentUserId;
 
   return (
     <>
@@ -40,7 +56,6 @@ const OneBookPage = () => {
                 <div className="card-body text-center">
                   <div className="book-cover-placeholder" style={{
                     width: '100%',
-                    // height: '300px',
                     backgroundColor: 'var(--light-color)',
                     display: 'flex',
                     alignItems: 'center',
@@ -61,7 +76,19 @@ const OneBookPage = () => {
             <div className="col-md-8">
               <div className="card">
                 <div className="card-body">
-                  <h1 className="card-title">{book.title}</h1>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h1 className="card-title">{book.title}</h1>
+                    {isPublisher && (
+                      <div className="d-flex gap-2">
+                        <Link to={`/edit-book/${id}`} className="btn btn-primary">
+                          Edit Book
+                        </Link>
+                        <button onClick={handleDelete} className="btn btn-danger">
+                          Delete Book
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <h3 className="card-subtitle mb-3 text-muted">by {book.author}</h3>
                   <p className="card-text">{book.description}</p>
                   <hr />

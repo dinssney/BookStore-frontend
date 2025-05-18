@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import bookService from '../services/bookService';
@@ -10,6 +11,7 @@ const BooksList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -25,6 +27,15 @@ const BooksList = () => {
 
     fetchBooks();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.showToast && location.state.message) {
+      toast.success(location.state.message);
+      location.state.showToast = false;
+      location.state.message = '';
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleBookClick = (id) => {
     navigate(`/books/${id}`);
